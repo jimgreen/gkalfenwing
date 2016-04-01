@@ -26,14 +26,6 @@ hasStairSteppedBoundary = true
                epsilon0 = 1/mu0/(lightSpeed^2)
 -- planet radius
                      Re = 6400e3
--- dipole streghth and tilt
-                 thetaB = 0
-                   phiB = 0
-                     B0 = -3.0574e-5
-                     Dx = B0*Re^3*math.sin(thetaB)*math.cos(phiB)
-                     Dy = B0*Re^3*math.sin(thetaB)*math.sin(phiB)
-                     Dz = B0*Re^3*math.cos(thetaB)
-                     r1 = 1.5*Re -- zero B field when r < r1
 -- radius of inner boundary
                      r0 = 3*Re
 -- inflows parameters
@@ -49,7 +41,6 @@ hasStairSteppedBoundary = true
                 r_ramp1 = 12*Re
                 r_ramp2 = 14*Re
                 stretch = 2
-                   xmir = -15*Re
 -- kinetic parameters
              mass_ratio = 25
          pressure_ratio = 1
@@ -133,41 +124,6 @@ function calcV(x,y,z)
    return vx, vy, vz
 end
 
-function dipoleB(x, y, z, x0, y0, z0, Dx, Dy, Dz)
-   local xx = (x - x0)
-   local yy = (y - y0)
-   local zz = (z - z0)
-   local rr = math.sqrt(xx^2+yy^2+zz^2)
-   local Bx = (3*xx*Dx*xx + 3*xx*Dy*yy + 3*xx*Dz*zz - Dx*rr^2) / rr^5
-   local By = (3*yy*Dx*xx + 3*yy*Dy*yy + 3*yy*Dz*zz - Dy*rr^2) / rr^5
-   local Bz = (3*zz*Dx*xx + 3*zz*Dy*yy + 3*zz*Dz*zz - Dz*rr^2) / rr^5
-   if (rr < r1) then
-      Bx, By, Bz = 0, 0, 0
-   end
-   return Bx, By, Bz
-end
-
-function staticB(x, y, z)
-   local Bxd0, Byd0, Bzd0 = dipoleB(x, y, z, 0, 0, 0, Dx, Dy, Dz)
-   local Bxs, Bys, Bzs = Bxd0, Byd0, Bzd0
-   return Bxs, Bys, Bzs
-end
-
-function totalB(x,y,z)
-   local Bxd0, Byd0, Bzd0 = dipoleB(x, y, z, 0, 0, 0, Dx, Dy, Dz)
-   local Bxdm, Bydm, Bzdm = dipoleB(x, y, z, 2*xmir, 0, 0, -Dx, Dy, Dz)
-   local Bxt, Byt, Bzt = Bxd0+Bxdm, Byd0+Bydm, Bzd0+Bzdm
-   if (x < xmir) then
-      Bxt, Byt, Bzt = 0, 0, 0
-   end
-   Bxt, Byt, Bzt = Bxt+Bx_in, Byt+By_in, Bzt+Bz_in
-   local rr = math.sqrt(x^2+y^2+z^2)
-   if (rr < r1) then
-      Bxt, Byt, Bzt = 0, 0, 0
-   end
-   return Bxt, Byt, Bzt
-end
-
 function calcB(x,y,z)
    return Bx_in, By_in, Bz_in
 end
@@ -202,12 +158,6 @@ function init(x,y,z)
    return rho_e, rhovx_e, rhovy_e, rhovz_e, u_e,
           rho_i, rhovx_i, rhovy_i, rhovz_i, u_i,
           Ex, Ey, Ez, Bx, By, Bz, 0, 0
-end
-
-function setStaticField(x, y, z)
-   local Exs, Eys, Ezs = 0, 0, 0
-   local Bxs, Bys, Bzs = staticB(x, y, z)
-   return Exs, Eys, Ezs, Bxs, Bys, Bzs, 0, 0
 end
 
 function setInOutField(x, y, z)
