@@ -15,8 +15,8 @@ hasStairSteppedBoundary = true
         subTimeStepping = true
               writeDivB = true
               writeDivE = true
-                   tEnd = 3600
-                nFrames = 60
+                   tEnd = 1800
+                nFrames = 30
      Lucee.IsRestarting = false
      Lucee.RestartFrame = -1
 -- physical constants
@@ -25,27 +25,27 @@ hasStairSteppedBoundary = true
                     mu0 = Lucee.Mu0
                epsilon0 = 1/mu0/(lightSpeed^2)
 -- planet radius
-                     Re = 6400e3
+                     Re = 2634e3
 -- radius of inner boundary
-                     r0 = 3*Re
+                     r0 = 1*Re
 -- inflows parameters
-                   n_in = 6e6
-                  vx_in = 450e3
+                   n_in = 56e6
+                  vx_in = 140e3
                   vy_in = 0
                   vz_in = 0
-                   p_in = 6e-12
+                   p_in = 3.8e-12
                   Bx_in = 0
                   By_in = 0
-                  Bz_in = -5e-9
+                  Bz_in = -77e-9
 -- mirdip setup specfications
-                r_ramp1 = 12*Re
-                r_ramp2 = 14*Re
+                r_ramp1 = 2*Re
+                r_ramp2 = 4*Re
                 stretch = 2
 -- kinetic parameters
              mass_ratio = 25
          pressure_ratio = 1
                  d_i_in = 0.5*Re
-                ionMass = Lucee.ProtonMass
+                ionMass = 14*Lucee.ProtonMass
                 elcMass = Lucee.ProtonMass/mass_ratio
                  rho_in = n_in * (elcMass + ionMass)
               ionCharge = ionMass / d_i_in / math.sqrt(mu0*rho_in)
@@ -54,9 +54,9 @@ hasStairSteppedBoundary = true
                    mass = {elcMass, ionMass}
 -- domain and grid
           numDimensions = 3
-           xlo, xup, nx = -20*Re, 20*Re, 40*2
-           ylo, yup, ny = -20*Re, 20*Re, 40*2
-           zlo, zup, nz = -20*Re, 20*Re, 40*2
+           xlo, xup, nx = -20*Re, 20*Re, 40*4
+           ylo, yup, ny = -20*Re, 20*Re, 40*4
+           zlo, zup, nz = -20*Re, 20*Re, 40*4
                   lower = {xlo, ylo, zlo}
                   upper = {xup, yup, zup}
                   cells = {nx, ny, nz}
